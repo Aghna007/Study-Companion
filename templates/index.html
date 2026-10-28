@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Companion - Ultimate Suite</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --sidebar-bg: #1e293b;
+            --sidebar-text: #f8fafc;
+            --sidebar-hover: #334155;
+            --card-bg: #fff;
+            --text-color: #1e293b;
+            --pre-bg: #f8fafc;
+            --border-color: #cbd5e1;
+        }
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --sidebar-bg: #1e1e1e;
+            --sidebar-text: #f1f5f9;
+            --sidebar-hover: #334155;
+            --card-bg: #1e1e1e;
+            --text-color: #f1f5f9;
+            --pre-bg: #1e293b;
+            --border-color: #334155;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: var(--bg-color); display: flex; color: var(--text-color); transition: background 0.3s, color 0.3s; }
+        
+        /* Brightened, Clean Sidebar */
+        .sidebar { width: 280px; background: var(--sidebar-bg); color: var(--sidebar-text); height: 100vh; padding: 20px; box-sizing: border-box; overflow-y: auto; position: fixed; border-right: 1px solid var(--border-color); }
+        .sidebar h2 { font-size: 1.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-top: 0; color: #38bdf8; }
+        .user-panel { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); padding: 10px; border-radius: 6px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; }
+        .user-panel span { font-weight: bold; color: #38bdf8; }
+        .logout-btn { background: #ef4444; color: white; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: bold; }
+        .logout-btn:hover { background: #dc2626; }
+
+        .sidebar ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar li { margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 8px 10px; border-radius: 6px; }
+        .sidebar li:hover { background: var(--sidebar-hover); }
+        .sidebar a { color: var(--sidebar-text); text-decoration: none; flex-grow: 1; font-size: 0.95rem; }
+        .star-btn { background: none; border: none; cursor: pointer; font-size: 1.1rem; color: #fbbf24; padding: 0 4px; }
+        
+        .subject-badge { font-size: 0.75rem; background: #0284c7; color: white; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; }
+        .filter-section { margin-bottom: 20px; font-size: 0.9rem; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; }
+        .filter-section a { display: inline-block; background: #334155; margin: 3px; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; color: #fff; text-decoration: none; }
+        .filter-section a:hover { background: #0284c7; }
+
+        /* Main Content Layout */
+        .main-content { margin-left: 280px; padding: 40px; flex-grow: 1; max-width: 950px; box-sizing: border-box; }
+        h1 { color: var(--text-color); }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid var(--border-color); }
+        button, .btn-link { background: #0284c7; color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; font-weight: bold; }
+        button:hover, .btn-link:hover { background: #0369a1; }
+        input[type="text"], input[type="file"], select { padding: 10px; width: 60%; margin-right: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--card-bg); color: var(--text-color); box-sizing: border-box; font-size: 1rem; }
+        pre { background: var(--pre-bg); padding: 15px; border-radius: 6px; border: 1px solid var(--border-color); white-space: pre-wrap; word-wrap: break-word; max-height: 300px; overflow-y: auto; color: var(--text-color); }
+        .search-result-item { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); }
+        .snippet { background: var(--pre-bg); border-left: 3px solid #0284c7; padding: 8px 12px; margin-top: 5px; color: var(--text-color); font-size: 0.95rem; font-style: italic; }
+        
+        /* Interactive Flashcard Quiz Styles */
+        .flashcard-container { perspective: 1000px; width: 100%; height: 180px; margin-top: 15px; cursor: pointer; }
+        .flashcard-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; background: var(--pre-bg); border: 1px solid var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .flashcard-container.flipped .flashcard-inner { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; box-sizing: border-box; }
+        .card-back { transform: rotateY(180deg); color: #16a34a; font-weight: bold; }
+        
+        /* Pomodoro Timer Widget */
+        .pomodoro-box { background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 10px; margin-bottom: 25px; text-align: center; }
+        .timer-display { font-size: 2.2rem; font-weight: bold; color: #ef4444; margin: 10px 0; }
+        
+        .theme-toggle { float: right; background: #475569; }
+        .theme-toggle:hover { background: #334155; }
+    </style>
+</head>
+<body data-theme="light">
+
+    <div class="sidebar">
+        <h2>📚 My Study Notes</h2>
+        
+        <div class="user-panel">
+            <span>👤 {{ username }}</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+        </div>
+        
+        {% if subjects %}
+            <div class="filter-section">
+                <strong>Filter by Subject:</strong><br>
+                <a href="{{ url_for('dashboard') }}">All</a>
+                {% for subj in subjects %}
+                    <a href="{{ url_for('dashboard', subject=subj) }}">{{ subj }}</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <ul>
+            {% for note in notes %}
+                <li>
+                    <a href="{{ url_for('view_note', note_id=note['id']) }}">
+                        {% if note['is_starred'] == 1 %}⭐ {% endif %}{{ note['filename'] }}<br>
+                        <span class="subject-badge">{{ note['subject'] }}</span>
+                    </a>
+                    <a href="{{ url_for('toggle_star', note_id=note['id']) }}" class="star-btn" title="Pin/Unpin Note">
+                        {% if note['is_starred'] == 1 %}★{% else %}☆{% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <button class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Dark Mode</button>
+        <h1>Study Companion Dashboard 🧠</h1>
+        
+        <!-- Pomodoro Focus Timer Widget -->
+        <div class="pomodoro-box">
+            <h3 style="margin: 0; color: #ef4444;">🍅 Pomodoro Focus Timer</h3>
+            <div class="timer-display" id="timer">25:00</div>
+            <button onclick="startTimer()" style="background: #16a34a;">Start</button>
+            <button onclick="pauseTimer()" style="background: #d97706;">Pause</button>
+            <button onclick="resetTimer()" style="background: #64748b;">Reset</button>
+        </div>
+
+        <div class="card">
+            <h3>🔍 Search Across All Notes</h3>
+            <form action="{{ url_for('search') }}" method="GET">
+                <input type="text" name="q" placeholder="Type a concept, keyword, or subject..." value="{{ query if query else '' }}" required>
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h3>📂 Upload New PDF</h3>
+            <form action="{{ url_for('dashboard') }}" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".pdf" required>
+                <input type="text" name="subject" placeholder="Subject (e.g. Physics)" required>
+                <button type="submit">Upload & Save</button>
+            </form>
+        </div>
+
+        {% if search_results is defined and query %}
+            <div class="card">
+                <h2>Search Results for "{{ query }}"</h2>
+                {% if search_results %}
+                    <p>Found matches in {{ search_results|length }} document(s):</p>
+                    {% for result in search_results %}
+                        <div class="search-result-item">
+                            <h4>📖 <a href="{{ url_for('view_note', note_id=result['id']) }}">{% if result['is_starred'] == 1 %}⭐ {% endif %}{{ result['filename'] }}</a> <span class="subject-badge">{{ result['subject'] }}</span></h4>
+                            <div class="snippet">{{ result['snippet'] }}</div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No matching notes found for "{{ query }}". Try a different keyword!</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if selected_note %}
+            <div class="card">
+                <h2>
+                    📖 {% if selected_note['is_starred'] == 1 %}⭐ {% endif %}{{ selected_note['filename'] }} 
+                    <a href="{{ url_for('toggle_star', note_id=selected_note['id']) }}" style="font-size: 1rem; text-decoration: none; margin-left: 10px;" title="Toggle Bookmark">
+                        {% if selected_note['is_starred'] == 1 %}★ Starred{% else %}☆ Star Note{% endif %}
+                    </a>
+                    <span class="subject-badge">{{ selected_note['subject'] }}</span>
+                </h2>
+                
+                <div style="background: var(--pre-bg); padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #0d9488; border: 1px solid var(--border-color);">
+                    <h3 style="margin-top: 0; color: #0d9488;">⚡ Key Summary Points</h3>
+                    <ul>
+                        {% for point in summary %}
+                            <li>{{ point }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                {% if flashcards %}
+                <div style="background: var(--pre-bg); padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #ca8a04; border: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin-top: 0; color: #ca8a04;">💡 Interactive Quiz Flashcards (Score: <span id="correct-score">0</span> / <span id="total-attempted">0</span>)</h3>
+                        <a href="{{ url_for('export_flashcards', note_id=selected_note['id']) }}" class="btn-link">📥 Export CSV</a>
+                    </div>
+
+                    <div class="flashcard-container" id="flashcard" onclick="this.classList.toggle('flipped')">
+                        <div class="flashcard-inner">
+                            <div class="card-face">
+                                <span style="font-size: 0.8rem; color: #888;">Question (<span id="card-index">1</span>/{{ flashcards|length }})</span>
+                                <h4 id="card-front" style="margin-top: 10px; color: #0284c7;">{{ flashcards[0]['front'] }}</h4>
+                                <p style="font-size: 0.85rem; color: #666;">(Click to reveal answer)</p>
+                            </div>
+                            <div class="card-face card-back">
+                                <span style="font-size: 0.8rem; color: #888;">Answer</span>
+                                <p id="card-back-text" style="margin-top: 10px;">{{ flashcards[0]['back'] }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                        <div>
+                            <button type="button" id="prev-btn">⬅️ Previous</button>
+                            <button type="button" id="next-btn">Next ➡️</button>
+                        </div>
+                        <div>
+                            <button type="button" onclick="recordScore(true)" style="background: #16a34a;">✅ Got it!</button>
+                            <button type="button" onclick="recordScore(false)" style="background: #dc2626;">🔁 Practice Again</button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <h3 style="margin-top: 30px;">📄 Full Document Content</h3>
+                <pre>{{ selected_note['content'] }}</pre>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            if (body.getAttribute('data-theme') === 'light') {
+                body.setAttribute('data-theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+            }
+        }
+
+        // Pomodoro Timer Logic
+        let timerInterval;
+        let timeLeft = 25 * 60;
+        const timerDisplay = document.getElementById('timer');
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (timerInterval) return;
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    alert('Pomodoro Session Complete! Take a 5-minute break.');
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timeLeft = 25 * 60;
+            updateTimerDisplay();
+        }
+
+        // Flashcard JavaScript Carousel & Score Tracking Logic
+        const flashcardsData = [
+            {% for card in flashcards %}
+                { front: {{ card['front'] | tojson }}, back: {{ card['back'] | tojson }} },
+            {% endfor %}
+        ];
+        let currentCardIndex = 0;
+        let correctCount = 0;
+        let attemptedCount = 0;
+
+        function updateCard() {
+            if (flashcardsData.length === 0) return;
+            document.getElementById('card-front').innerText = flashcardsData[currentCardIndex].front;
+            document.getElementById('card-back-text').innerText = flashcardsData[currentCardIndex].back;
+            document.getElementById('card-index').innerText = currentCardIndex + 1;
+            document.getElementById('flashcard').classList.remove('flipped');
+        }
+
+        function recordScore(isCorrect) {
+            attemptedCount++;
+            if (isCorrect) correctCount++;
+            document.getElementById('correct-score').innerText = correctCount;
+            document.getElementById('total-attempted').innerText = attemptedCount;
+            nextCard();
+        }
+
+        document.getElementById('next-btn')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (flashcardsData.length === 0) return;
+            currentCardIndex = (currentCardIndex + 1) % flashcardsData.length;
+            updateCard();
+        });
+
+        document.getElementById('prev-btn')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (flashcardsData.length === 0) return;
+            currentCardIndex = (currentCardIndex - 1 + flashcardsData.length) % flashcardsData.length;
+            updateCard();
+        });
+    </script>
+</body>
+</html>

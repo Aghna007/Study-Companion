@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Companion - Welcome</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        .hero-container {
+            text-align: center;
+            max-width: 800px;
+            padding: 60px 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        p {
+            font-size: 1.25rem;
+            color: #dcdde1;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .btn {
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn-login {
+            background: #3498db;
+            color: white;
+        }
+        .btn-login:hover {
+            background: #2980b9;
+        }
+        .btn-register {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-register:hover {
+            background: #219653;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-container">
+        <h1>Study Companion 🧠</h1>
+        <p>Your ultimate offline-first platform to upload notes, auto-generate AI summaries, master interactive flip-card quizzes, and organize your academic future seamlessly.</p>
+        <div class="btn-group">
+            <a href="{{ url_for('login') }}" class="btn btn-login">Login to Workspace</a>
+            <a href="{{ url_for('register') }}" class="btn btn-register">Create Account</a>
+        </div>
+    </div>
+</body>
+</html>
